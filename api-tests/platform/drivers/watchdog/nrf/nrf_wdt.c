@@ -17,21 +17,6 @@
 
 #include "nrf_wdt.h"
 
-#ifndef ARG_UNUSED
-#define ARG_UNUSED(x) (void)(x)
-#endif
-
-/* Simply encode the watchdog peripheral base address into the driver instead
- * of relying on the target configuration system.
- */
-#define NRF_WDT0_NS ((struct NRF_WDT_Type *)0x50018000)
-
-#define PSA_TEST_WDT_INSTANCE NRF_WDT0_NS
-/* Simply encode the timeout into the driver instead of using the target
- * configuration system.
- */
-#define TIMEOUT_US 500000000
-
 /* Following defines should be used for structure members */
 #define     __IM     volatile const      /*! Defines 'read only' structure member permissions */
 #define     __OM     volatile            /*! Defines 'write only' structure member permissions */
@@ -98,13 +83,12 @@ __OM  uint32_t  RR[8];            /*!< (@ 0x00000600) Description collection: Re
 **/
 int nrf_wdt_init(addr_t base_addr, uint32_t time_us)
 {
-    ARG_UNUSED(base_addr);
-    ARG_UNUSED(time_us);
+    struct NRF_WDT_Type *nrf_wdt = (struct NRF_WDT_Type *)base_addr;
 
     /* From nRF53 documentation, the timeout in seconds is
      *       timeout [s] = (CRV + 1) / 32768
      */
-    uint32_t ticks = ((TIMEOUT_US / 1000000) * 32768) - 1;
+    uint32_t ticks = ((time_us / 1000000) * 32768) - 1;
 
     if ((ticks >= 0xFFFFFFFFUL) || (ticks < 0xFUL))
     {
@@ -112,10 +96,10 @@ int nrf_wdt_init(addr_t base_addr, uint32_t time_us)
         return PAL_STATUS_ERROR;
     }
 
-    PSA_TEST_WDT_INSTANCE->CRV = ticks;
+    nrf_wdt->CRV = ticks;
 
     // Enable Stop and keep the watchdog running while CPU is sleeping
-    PSA_TEST_WDT_INSTANCE->CONFIG = ((WDT_CONFIG_STOPEN_Enable << WDT_CONFIG_STOPEN_Pos) |
+    nrf_wdt->CONFIG = ((WDT_CONFIG_STOPEN_Enable << WDT_CONFIG_STOPEN_Pos) |
                        (WDT_CONFIG_SLEEP_Run << WDT_CONFIG_SLEEP_Pos));
 
     return PAL_STATUS_SUCCESS;
@@ -128,9 +112,8 @@ int nrf_wdt_init(addr_t base_addr, uint32_t time_us)
 **/
 int nrf_wdt_enable(addr_t base_addr)
 {
-    ARG_UNUSED(base_addr);
-
-    PSA_TEST_WDT_INSTANCE->TASKS_START = 0x01UL; // Trigger start task
+    struct NRF_WDT_Type *nrf_wdt = (struct NRF_WDT_Type *)base_addr;
+    nrf_wdt->TASKS_START = 0x01UL; // Trigger start task
 
     return PAL_STATUS_SUCCESS;
 }
@@ -142,10 +125,9 @@ int nrf_wdt_enable(addr_t base_addr)
 **/
 int nrf_wdt_disable(addr_t base_addr)
 {
-    ARG_UNUSED(base_addr);
-
-    PSA_TEST_WDT_INSTANCE->TSEN = 0x6E524635UL; // Special value to enable stop task
-    PSA_TEST_WDT_INSTANCE->TASKS_STOP = 0x01UL; // Trigger stop task
+    struct NRF_WDT_Type *nrf_wdt = (struct NRF_WDT_Type *)base_addr;
+    nrf_wdt->TSEN = 0x6E524635UL; // Special value to enable stop task
+    nrf_wdt->TASKS_STOP = 0x01UL; // Trigger stop task
 
     return PAL_STATUS_SUCCESS;
 }
@@ -157,7 +139,6 @@ int nrf_wdt_disable(addr_t base_addr)
 **/
 int nrf_wdt_is_enabled(addr_t base_addr)
 {
-    ARG_UNUSED(base_addr);
-
-    return PSA_TEST_WDT_INSTANCE->RUNSTATUS & WDT_RUNSTATUS_RUNSTATUSWDT_Msk;
+    struct NRF_WDT_Type *nrf_wdt = (struct NRF_WDT_Type *)base_addr;
+    return (nrf_wdt->RUNSTATUS & WDT_RUNSTATUS_RUNSTATUSWDT_Msk);
 }

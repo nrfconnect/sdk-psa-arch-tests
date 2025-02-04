@@ -77,6 +77,9 @@ extern const uint8_t sha_256_incorrect_hash[];
 extern const uint8_t sha_384_hash[];
 extern const uint8_t sha_512_hash[];
 
+extern const uint8_t aes_mmo_hash_input[];
+extern const uint8_t aes_mmo_hash[];
+
 extern const uint8_t ecdh_secp_256_r1_prv_key[];
 extern const uint8_t ecdh_secp_256_r1_pub_key[];
 extern const uint8_t ecdh_secp_384_r1_prv_key[];
@@ -134,6 +137,11 @@ extern const uint8_t cmac_aes_128[];
 extern uint8_t expected_output[BUFFER_SIZE];
 
 extern void crypto_common_exit_action(void);
+
+extern const uint8_t ccm_star_no_tag_iv[];
+extern const uint8_t ccm_star_no_tag_plaintext[];
+extern const uint8_t ccm_star_no_tag_ciphertext[];
+extern const uint8_t ccm_star_no_tag_key_data[];
 
 #ifdef ARCH_TEST_FFDHE2048
 extern const uint8_t ffdh_key_data_2048[];

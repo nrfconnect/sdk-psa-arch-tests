@@ -34,7 +34,6 @@ int32_t pal_crypto_function(int type, va_list valist)
 {
     psa_algorithm_t                           alg;
     const uint8_t                            *input, *input1;
-    uint64_t                                  input_value;
     size_t                                    input_length, input_length1, bits;
     uint8_t                                  *output;
     size_t                                    output_size;
@@ -66,6 +65,9 @@ int32_t pal_crypto_function(int type, va_list valist)
     psa_status_t                              status;
     uint8_t                                  *output1;
     size_t                                   output_size1, *p_output_length1;
+#ifdef ARCH_TEST_PBKDF2
+    uint64_t                                  input_value;
+#endif
 #ifdef CRYPTO_1_1_0
     const uint8_t                            *expected_output;
 #endif

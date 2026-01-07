@@ -20,16 +20,14 @@
 
 #include "nrf_wdt.h"
 
-/* Regression test status reporting buffer */
-uint8_t test_status_buffer[256]  = {0};
-
 /**
     @brief    - This function initializes the UART
-    @param    - Void
+    @param    - uart base addr
     @return   - SUCCESS/FAILURE
 **/
-int pal_uart_init_ns(void)
+int pal_uart_init_ns(uint32_t uart_base_addr)
 {
+    (void)uart_base_addr;
     return PAL_STATUS_SUCCESS;
 }
 
@@ -39,6 +37,7 @@ int pal_uart_init_ns(void)
               - data     : Value for format specifier
     @return   - SUCCESS/FAILURE
 **/
+
 int pal_print_ns(const char *str, int32_t data)
 {
     tfm_log_printf(str, data);
@@ -47,46 +46,47 @@ int pal_print_ns(const char *str, int32_t data)
 
 /**
     @brief           - Initializes a hardware watchdog timer
-    @param           - time_us         : Time in micro seconds
+    @param           - base_addr       : Base address of the watchdog module
+                     - time_us         : Time in micro seconds
                      - timer_tick_us   : Number of ticks per micro second
     @return          - SUCCESS/FAILURE
 **/
-int pal_wd_timer_init_ns(uint32_t time_us, uint32_t timer_tick_us)
+int pal_wd_timer_init_ns(addr_t base_addr, uint32_t time_us, uint32_t timer_tick_us)
 {
     (void)timer_tick_us;
-    return nrf_wdt_init((addr_t) PLATFORM_WD_BASE, time_us);
+    return nrf_wdt_init(base_addr, time_us);
 }
 
 /**
     @brief           - Enables a hardware watchdog timer
-    @param           - Void
+    @param           - base_addr       : Base address of the watchdog module
     @return          - SUCCESS/FAILURE
 **/
-int pal_watchdog_enable(void)
+int pal_wd_timer_enable_ns(addr_t base_addr)
 {
-    return nrf_wdt_enable((addr_t) PLATFORM_WD_BASE);
+    return nrf_wdt_enable(base_addr);
 }
 
 /**
     @brief           - Disables a hardware watchdog timer
-    @param           - Void
+    @param           - base_addr  : Base address of the watchdog module
     @return          - SUCCESS/FAILURE
 **/
-int pal_watchdog_disable(void)
+int pal_wd_timer_disable_ns(addr_t base_addr)
 {
-    return nrf_wdt_disable((addr_t) PLATFORM_WD_BASE);
+    return nrf_wdt_disable(base_addr);
 }
 
 /**
     @brief    - Reads from given non-volatile address.
-    @param    - offset  : Offset
+    @param    - base    : Base address of nvmem
+                offset  : Offset
                 buffer  : Pointer to source address
                 size    : Number of bytes
     @return   - SUCCESS/FAILURE
 **/
-int pal_nvm_read(uint32_t offset, void *buffer, size_t size)
+int pal_nvmem_read_ns(addr_t base, uint32_t offset, void *buffer, int size)
 {
-    addr_t base = PLATFORM_NVM_BASE;
     if (base != 0) {
         /* Unexpected base address */
         return PAL_STATUS_ERROR;
@@ -98,14 +98,14 @@ int pal_nvm_read(uint32_t offset, void *buffer, size_t size)
 
 /**
     @brief    - Writes into given non-volatile address.
-    @param    - offset  : Offset
+    @param    - base    : Base address of nvmem
+                offset  : Offset
                 buffer  : Pointer to source address
                 size    : Number of bytes
     @return   - SUCCESS/FAILURE
 **/
-int pal_nvm_write(uint32_t offset, void *buffer, size_t size)
+int pal_nvmem_write_ns(addr_t base, uint32_t offset, void *buffer, int size)
 {
-    addr_t base = PLATFORM_NVM_BASE;
     if (base != 0) {
         /* Unexpected base address */
         return PAL_STATUS_ERROR;

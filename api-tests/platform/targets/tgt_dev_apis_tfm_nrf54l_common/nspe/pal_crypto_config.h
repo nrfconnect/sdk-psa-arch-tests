@@ -327,6 +327,17 @@
 #define ARCH_TEST_CCM
 
 /**
+ * \def ARCH_TEST_CCM_STAR_NO_TAG
+ *
+ * Enable the CCM* mode with a zero-length authentication field, i.e.
+ * confidentiality without authenticity (IEEE P802.15-4/0537r2). PSA exposes
+ * this as the cipher algorithm PSA_ALG_CCM_STAR_NO_TAG.
+ *
+ * Requires: ARCH_TEST_AES
+ */
+#define ARCH_TEST_CCM_STAR_NO_TAG
+
+/**
  * \def ARCH_TEST_GCM
  *
  * Enable the Galois/Counter Mode (GCM) for AES.

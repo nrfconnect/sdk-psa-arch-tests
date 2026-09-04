@@ -170,6 +170,20 @@ static const test_data check1[] = {
 #endif
 #endif
 
+#ifdef ARCH_TEST_AES_MMO_ZIGBEE
+{
+    .test_desc            = "Test psa_hash_compute with AES MMO algorithm\n",
+    .alg                  = PSA_ALG_AES_MMO_ZIGBEE,
+    .input                = aes_mmo_hash_input,
+    .input_length         = AES_MMO_HASH_INPUT_LEN,
+    .hash                 = expected_output,
+    .hash_size            = BUFFER_SIZE,
+    .expected_hash        = aes_mmo_hash,
+    .expected_hash_length = AES_MMO_HASH_LEN,
+    .expected_status      = PSA_SUCCESS,
+},
+#endif
+
 {
     .test_desc            = "Test psa_hash_compute with invalid algorithm\n",
     .alg                  = SYS_ACS_HASH_ALG_INVALID,
@@ -181,19 +195,4 @@ static const test_data check1[] = {
     .expected_hash_length = 64,
     .expected_status      = PSA_ERROR_NOT_SUPPORTED,
 },
-
-#ifdef ARCH_TEST_AES_MMO_ZIGBEE
-{
-    .test_desc            = "Test psa_hash_compute with AES MMO ZIGBEE algorithm\n",
-    .alg                  = PSA_ALG_AES_MMO_ZIGBEE,
-    .input                = aes_mmo_hash_input,
-    .input_length         = sizeof(aes_mmo_hash_input),
-    .hash                 = expected_output,
-    .hash_size            = BUFFER_SIZE,
-    .expected_hash        = aes_mmo_hash,
-    .expected_hash_length = 16,
-    .expected_status      = PSA_SUCCESS,
-},
-#endif
-
 };

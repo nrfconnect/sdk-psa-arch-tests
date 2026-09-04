@@ -79,6 +79,8 @@ extern const uint8_t sha_512_hash[];
 
 extern const uint8_t aes_mmo_hash_input[];
 extern const uint8_t aes_mmo_hash[];
+#define AES_MMO_HASH_INPUT_LEN 18
+#define AES_MMO_HASH_LEN       16
 
 extern const uint8_t ecdh_secp_256_r1_prv_key[];
 extern const uint8_t ecdh_secp_256_r1_pub_key[];
